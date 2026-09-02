@@ -1,0 +1,10 @@
+"scenario","scenario_label","scenario_definition","n_trials","n_baskets","total_patients_per_trial","target_censoring","mean_observed_censoring","sd_observed_censoring","mean_patients_per_trial","mean_events_per_trial"
+"global_null","Global null","Nine baskets generated around a common null effect with low between-basket heterogeneity.",2000,9,135,0.3,0.30797037037037,0.045208159262087,135,93.424
+"heterogeneous","Complete heterogeneity","Nine fixed basket effects spanning a broad heterogeneous range.",2000,9,135,0.3,0.264233333333333,0.0466610390280955,135,99.3285
+"hetvar_misspec","Heteroskedastic variances","Mixed-efficacy effects with basket-specific residual variances.",1000,9,135,0.3,0.318674074074074,0.0443916188987119,135,91.979
+"homogeneous","Homogeneous","Nine baskets generated around a common positive mean with low between-basket heterogeneity.",2000,9,135,0.3,0.307825925925926,0.0438236323141038,135,93.4435
+"infcens_misspec","Informative censoring","Mixed-efficacy effects with informative censoring.",1000,9,135,0.3,0.308903703703704,0.0435929732384211,135,93.298
+"mixed","Mixed efficacy","Six responsive baskets around a positive mean and three resistant outlier baskets.",2000,9,135,0.3,0.294544444444444,0.0433131723163576,135,95.2365
+"t_misspec","Student-t errors","Mixed-efficacy effects with scaled Student-t errors (5 degrees of freedom).",1000,9,135,0.3,0.270451851851852,0.0713547799272976,135,98.489
+"tcga_calib","TCGA-calibrated","TCGA-calibrated fixed effects, basket sizes, and censoring targets.",1000,9,4146,0.725794741919923,0.725915098890497,0.00681325296638314,4146,1136.356
+"weibull_misspec","Gumbel (extreme-value) misspecification","Mixed-efficacy effects with Gumbel (extreme-value) errors on the log-time scale.",1000,9,135,0.3,0.230451851851852,0.0699032192946041,135,103.889

@@ -1,0 +1,7 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# Full simulation inputs are generated on demand and are not part of the DOI snapshot.
+data/sim_*.rds

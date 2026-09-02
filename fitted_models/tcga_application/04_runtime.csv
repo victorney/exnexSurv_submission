@@ -1,0 +1,5 @@
+"method_id","method","seconds"
+"gibbs_exnex","exnexSurv (Gibbs DA)",4.44
+"stan_exnex","Stan EXNEX (NUTS)",38.09
+"stan_pooled","Complete pooling",31.24
+"stan_unpooled","No pooling (stratified)",33.47

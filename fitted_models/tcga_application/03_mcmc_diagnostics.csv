@@ -1,0 +1,47 @@
+"method_id","method","parameter","basket","rhat","bulk_ess"
+"gibbs_exnex","exnexSurv (Gibbs DA)","theta","ACC",1.00109896788429,1724.46144895009
+"gibbs_exnex","exnexSurv (Gibbs DA)","theta","BLCA",1.00175948984826,1300.74180272926
+"gibbs_exnex","exnexSurv (Gibbs DA)","theta","BRCA",1.00266941011977,549.01982492869
+"gibbs_exnex","exnexSurv (Gibbs DA)","theta","CESC",1.00117405168285,1178.92422642638
+"gibbs_exnex","exnexSurv (Gibbs DA)","theta","COADREAD",1.00150213795567,793.981481409356
+"gibbs_exnex","exnexSurv (Gibbs DA)","theta","ESCA",1.00081577153115,1965.57498071477
+"gibbs_exnex","exnexSurv (Gibbs DA)","theta","HNSC",1.00023669252802,1496.84979032265
+"gibbs_exnex","exnexSurv (Gibbs DA)","theta","KIRC",1.00270838062517,1190.96102964117
+"gibbs_exnex","exnexSurv (Gibbs DA)","theta","LGG",1.00150736752344,963.965010136557
+"gibbs_exnex","exnexSurv (Gibbs DA)","beta",,1.00556455692108,893.982199505027
+"gibbs_exnex","exnexSurv (Gibbs DA)","sigma2",,1.00484766407888,362.362091973942
+"stan_exnex","Stan EXNEX (NUTS)","theta","ACC",0.99944723691988,7560.12486838654
+"stan_exnex","Stan EXNEX (NUTS)","theta","BLCA",0.999281381159498,5220.83423671391
+"stan_exnex","Stan EXNEX (NUTS)","theta","BRCA",0.99955916024506,5163.66954667125
+"stan_exnex","Stan EXNEX (NUTS)","theta","CESC",1.00027150875361,6924.73874988679
+"stan_exnex","Stan EXNEX (NUTS)","theta","COADREAD",0.999975704019348,6378.97900094009
+"stan_exnex","Stan EXNEX (NUTS)","theta","ESCA",0.999402905723193,8452.45245285963
+"stan_exnex","Stan EXNEX (NUTS)","theta","HNSC",0.999958513337014,5762.63034460722
+"stan_exnex","Stan EXNEX (NUTS)","theta","KIRC",0.999176691672832,6266.54041213991
+"stan_exnex","Stan EXNEX (NUTS)","theta","LGG",0.999653452147242,7722.07279182287
+"stan_exnex","Stan EXNEX (NUTS)","beta",,0.999798951900251,5838.49650766179
+"stan_exnex","Stan EXNEX (NUTS)","sigma2",,0.999883791958006,3508.56095784183
+"stan_exnex","Stan EXNEX (NUTS)","mu",,0.999891528261137,5189.79292006663
+"stan_exnex","Stan EXNEX (NUTS)","tau2",,0.999979770894503,3087.29702812694
+"stan_pooled","Complete pooling","theta","ACC",1.00028778619701,1916.99177681727
+"stan_pooled","Complete pooling","theta","BLCA",1.00028778619701,1916.99177681727
+"stan_pooled","Complete pooling","theta","BRCA",1.00028778619701,1916.99177681727
+"stan_pooled","Complete pooling","theta","CESC",1.00028778619701,1916.99177681727
+"stan_pooled","Complete pooling","theta","COADREAD",1.00028778619701,1916.99177681727
+"stan_pooled","Complete pooling","theta","ESCA",1.00028778619701,1916.99177681727
+"stan_pooled","Complete pooling","theta","HNSC",1.00028778619701,1916.99177681727
+"stan_pooled","Complete pooling","theta","KIRC",1.00028778619701,1916.99177681727
+"stan_pooled","Complete pooling","theta","LGG",1.00028778619701,1916.99177681727
+"stan_pooled","Complete pooling","beta",,0.999880110864088,2461.69135032041
+"stan_pooled","Complete pooling","sigma2",,1.00042328600435,1995.26516426479
+"stan_unpooled","No pooling (stratified)","theta","ACC",0.999200229049949,8909.76301058862
+"stan_unpooled","No pooling (stratified)","theta","BLCA",0.999228575934914,6329.60036503195
+"stan_unpooled","No pooling (stratified)","theta","BRCA",0.999990339235769,5548.58624386043
+"stan_unpooled","No pooling (stratified)","theta","CESC",0.999433860509347,6773.09060824048
+"stan_unpooled","No pooling (stratified)","theta","COADREAD",1.00034838959807,5800.6261872885
+"stan_unpooled","No pooling (stratified)","theta","ESCA",0.999982566741131,6666.14981575388
+"stan_unpooled","No pooling (stratified)","theta","HNSC",0.999574652471729,7774.69110987857
+"stan_unpooled","No pooling (stratified)","theta","KIRC",1.00007636408805,6161.24777834076
+"stan_unpooled","No pooling (stratified)","theta","LGG",0.999491561246749,6806.98892960189
+"stan_unpooled","No pooling (stratified)","beta",,1.0003869453915,5303.91847438581
+"stan_unpooled","No pooling (stratified)","sigma2",,0.999763879764715,4458.69290852144

@@ -1,0 +1,31 @@
+"scenario_label","method","population","variance_group","n_basket_evaluations","bias","rmse","coverage_95","mean_interval_width"
+"Heteroskedastic variances","Complete pooling","all_fits","High",3000,1.75783378850254,1.76535212610894,0,0.53363493888789
+"Heteroskedastic variances","Complete pooling","all_fits","Low",3000,-0.243382332870093,0.30417612174869,56.2333333333333,0.53363493888789
+"Heteroskedastic variances","Complete pooling","all_fits","Medium",3000,-0.242876003814172,0.31080237182313,54.9,0.53363493888789
+"Heteroskedastic variances","Complete pooling","qualified_trials","High",3000,1.75783378850254,1.76535212610894,0,0.53363493888789
+"Heteroskedastic variances","Complete pooling","qualified_trials","Low",3000,-0.243382332870093,0.30417612174869,56.2333333333333,0.53363493888789
+"Heteroskedastic variances","Complete pooling","qualified_trials","Medium",3000,-0.242876003814172,0.31080237182313,54.9,0.53363493888789
+"Heteroskedastic variances","No pooling (stratified)","all_fits","High",3000,0.114540169318716,3.33019463533687,86.7666666666667,2.23665437639408
+"Heteroskedastic variances","No pooling (stratified)","all_fits","Low",3000,0.0802978497563443,0.246383633321941,96.5,1.03620938308672
+"Heteroskedastic variances","No pooling (stratified)","all_fits","Medium",3000,0.0435034878409564,1.5354907658612,93.0333333333333,1.49504671253412
+"Heteroskedastic variances","No pooling (stratified)","qualified_trials","High",3000,0.114540169318716,3.33019463533687,86.7666666666667,2.23665437639408
+"Heteroskedastic variances","No pooling (stratified)","qualified_trials","Low",3000,0.0802978497563443,0.246383633321941,96.5,1.03620938308672
+"Heteroskedastic variances","No pooling (stratified)","qualified_trials","Medium",3000,0.0435034878409564,1.5354907658612,93.0333333333333,1.49504671253412
+"Heteroskedastic variances","Stan EXNEX (NUTS)","all_fits","High",3000,0.285417412758316,1.66602113829702,84.6666666666667,2.07684884529376
+"Heteroskedastic variances","Stan EXNEX (NUTS)","all_fits","Low",3000,0.0359353183279774,0.219889263461037,97.9,0.997272131096834
+"Heteroskedastic variances","Stan EXNEX (NUTS)","all_fits","Medium",3000,-0.031742623299715,1.22982777982116,94.0333333333333,1.39910370984272
+"Heteroskedastic variances","Stan EXNEX (NUTS)","jointly_qualified","High",2976,0.223224234069734,0.623366656403637,84.7782258064516,1.76458441217728
+"Heteroskedastic variances","Stan EXNEX (NUTS)","jointly_qualified","Low",2976,0.0359908913302504,0.219259035211549,97.883064516129,0.997214292984249
+"Heteroskedastic variances","Stan EXNEX (NUTS)","jointly_qualified","Medium",2976,-0.052979443481471,0.354358572569424,93.9852150537634,1.32967985064713
+"Heteroskedastic variances","Stan EXNEX (NUTS)","qualified_trials","High",2982,0.223131157687005,0.623222987679631,84.7753185781355,1.76448028494004
+"Heteroskedastic variances","Stan EXNEX (NUTS)","qualified_trials","Low",2982,0.0364350105650166,0.219592048640032,97.887323943662,0.997404081063718
+"Heteroskedastic variances","Stan EXNEX (NUTS)","qualified_trials","Medium",2982,-0.052945901985494,0.354621466189843,93.9973172367539,1.32970812149945
+"Heteroskedastic variances","exnexSurv (Gibbs DA)","all_fits","High",3000,0.230716595295653,0.662736986397349,84.0333333333333,1.796275057043
+"Heteroskedastic variances","exnexSurv (Gibbs DA)","all_fits","Low",3000,0.0359023102193051,0.219847464917646,97.7666666666667,0.997184612712977
+"Heteroskedastic variances","exnexSurv (Gibbs DA)","all_fits","Medium",3000,-0.0522536204514587,0.358881265084674,94.2666666666667,1.33783624987082
+"Heteroskedastic variances","exnexSurv (Gibbs DA)","jointly_qualified","High",2976,0.223199433032957,0.623253978348352,84.1397849462366,1.76337479942126
+"Heteroskedastic variances","exnexSurv (Gibbs DA)","jointly_qualified","Low",2976,0.0359590665037153,0.219238757055222,97.7486559139785,0.997061520597811
+"Heteroskedastic variances","exnexSurv (Gibbs DA)","jointly_qualified","Medium",2976,-0.0530667579572514,0.354229637964534,94.2540322580645,1.32976705446165
+"Heteroskedastic variances","exnexSurv (Gibbs DA)","qualified_trials","High",2979,0.223031795713846,0.624349863614095,84.1221886539107,1.76479740317263
+"Heteroskedastic variances","exnexSurv (Gibbs DA)","qualified_trials","Low",2979,0.0359368119959986,0.219238713106545,97.7509231285666,0.997127819290266
+"Heteroskedastic variances","exnexSurv (Gibbs DA)","qualified_trials","Medium",2979,-0.053395549588638,0.354319235340621,94.2598187311178,1.32959328824501

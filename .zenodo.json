@@ -27,12 +27,12 @@
   "related_identifiers": [
     {
       "identifier": "10.32614/CRAN.package.exnexSurv",
-      "relation": "is related to",
+      "relation": "requires",
       "scheme": "doi"
     },
     {
       "identifier": "https://github.com/victorney/exnexSurv_submission",
-      "relation": "is identical to",
+      "relation": "isIdenticalTo",
       "scheme": "url"
     }
   ]

@@ -7,8 +7,6 @@ suppressPackageStartupMessages({
   library(rstan)
   library(dplyr)
   library(tidyr)
-  library(ggplot2)
-  library(patchwork)
   library(posterior)
   library(exnexSurv)
 })
@@ -79,13 +77,6 @@ method_levels <- c(
   "Stan EXNEX (NUTS)",
   "exnexSurv (Gibbs DA)"
 )
-method_colors <- c(
-  "Complete pooling" = "#D55E00",
-  "No pooling (stratified)" = "#E69F00",
-  "Stan EXNEX (NUTS)" = "#009E73",
-  "exnexSurv (Gibbs DA)" = "#0072B2"
-)
-
 download_clinical <- function(study) {
   dest <- file.path(
     raw_dir,
@@ -190,7 +181,13 @@ fit_gibbs_exnex <- function() {
       iter = n_iter,
       warmup = n_warmup,
       chains = n_chains,
-      parallel_chains = n_chains,
+      # exnexSurv 1.3.x takes the number of chains to run concurrently;
+      # version 1.4.0 replaced that with a logical flag.
+      parallel_chains = if (utils::packageVersion("exnexSurv") >= "1.4.0") {
+        TRUE
+      } else {
+        n_chains
+      },
       seed = seed
     ),
     error = function(e) {
@@ -460,7 +457,7 @@ saveRDS(
   list(
     data = tcga,
     basket_summary = basket_summary,
-    posterior = posterior,
+    posterior = posterior_summary,
     diagnostics = diagnostics,
     runtime = runtime,
     gibbs = gibbs$fit,
@@ -558,37 +555,7 @@ if (length(rmst_rows) > 0L) {
   )
 }
 
-paper_theme <- function(base_size = 10) {
-  theme_bw(base_size = base_size) +
-    theme(
-      panel.grid.minor = element_blank(),
-      panel.grid.major.x = element_blank(),
-      panel.border = element_rect(color = "black", linewidth = 0.6),
-      axis.title = element_text(face = "bold"),
-      axis.text = element_text(color = "black"),
-      legend.position = "bottom",
-      legend.title = element_text(face = "bold"),
-      strip.background = element_rect(fill = "grey95", color = "black"),
-      strip.text = element_text(face = "bold"),
-      plot.title = element_text(face = "bold", hjust = 0),
-      plot.subtitle = element_text(color = "grey25", hjust = 0),
-      plot.margin = margin(6, 8, 6, 6)
-    )
-}
-
-save_pdf <- function(plot, filename, width, height) {
-  ggsave(
-    file.path(figure_dir, filename),
-    plot,
-    width = width,
-    height = height,
-    units = "in",
-    device = "pdf",
-    useDingbats = FALSE
-  )
-}
-
-theta_summary <- posterior %>%
+theta_summary <- posterior_summary %>%
   filter(parameter == "theta") %>%
   left_join(
     basket_summary %>% select(basket, n, n_events),
@@ -608,42 +575,6 @@ pooled_band <- theta_summary %>%
   filter(method_id == "stan_pooled") %>%
   slice(1)
 
-panel_a <- ggplot() +
-  geom_rect(
-    data = pooled_band,
-    aes(xmin = 0.4, xmax = K + 0.6, ymin = q025, ymax = q975),
-    fill = "grey70",
-    alpha = 0.25,
-    inherit.aes = FALSE
-  ) +
-  geom_hline(
-    data = pooled_band,
-    aes(yintercept = estimate),
-    linetype = "dashed",
-    color = "grey30"
-  ) +
-  geom_pointrange(
-    data = panel_a_data,
-    aes(
-      basket,
-      estimate,
-      ymin = q025,
-      ymax = q975,
-      color = method
-    ),
-    position = position_dodge(width = 0.7),
-    size = 0.35,
-    linewidth = 0.5
-  ) +
-  scale_color_manual(values = method_colors, name = "Method", drop = FALSE) +
-  labs(
-    title = "(A) Basket-specific log-survival intercepts",
-    subtitle = "Grey band: complete-pooling estimate (95% CrI)",
-    x = NULL,
-    y = "Posterior mean (95% CrI)"
-  ) +
-  paper_theme()
-
 shrinkage_data <- theta_summary %>%
   filter(method_id %in% c("gibbs_exnex", "stan_unpooled")) %>%
   select(basket, method_id, estimate, q025, q975) %>%
@@ -653,84 +584,16 @@ shrinkage_data <- theta_summary %>%
   ) %>%
   left_join(basket_summary %>% select(basket, n_events), by = "basket")
 
-panel_b <- ggplot(
-  shrinkage_data,
-  aes(estimate_stan_unpooled, estimate_gibbs_exnex)
-) +
-  geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "grey30") +
-  geom_errorbar(
-    aes(
-      y = estimate_gibbs_exnex,
-      xmin = q025_stan_unpooled,
-      xmax = q975_stan_unpooled
-    ),
-    orientation = "y",
-    width = 0,
-    color = "grey40"
-  ) +
-  geom_errorbar(
-    aes(ymin = q025_gibbs_exnex, ymax = q975_gibbs_exnex),
-    width = 0,
-    color = "grey40"
-  ) +
-  geom_point(aes(size = n_events), color = "#0072B2") +
-  geom_text(aes(label = basket), vjust = -1.1, size = 2.6) +
-  scale_size_continuous(range = c(1.5, 5)) +
-  labs(
-    title = "(B) Shrinkage of basket effects under EXNEX",
-    x = "No pooling posterior mean",
-    y = "exnexSurv posterior mean",
-    size = "Events"
-  ) +
-  paper_theme()
-
-beta_summary <- posterior %>%
+beta_summary <- posterior_summary %>%
   filter(parameter == "beta")
 
-panel_c <- ggplot(
-  beta_summary,
-  aes(estimate, method, color = method)
-) +
-  geom_vline(xintercept = 0, linetype = "dashed", color = "grey30") +
-  geom_pointrange(aes(xmin = q025, xmax = q975), size = 0.35, linewidth = 0.5) +
-  scale_color_manual(values = method_colors, name = "Method", drop = FALSE) +
-  labs(
-    title = "(C) Age coefficient",
-    subtitle = "Log-survival months per SD of age",
-    x = "Posterior mean (95% CrI)",
-    y = NULL
-  ) +
-  paper_theme() +
-  theme(legend.position = "none")
-
-sigma_summary <- posterior %>%
+sigma_summary <- posterior_summary %>%
   filter(parameter == "sigma2") %>%
   mutate(
     estimate = sqrt(estimate),
     q025 = sqrt(q025),
     q975 = sqrt(q975)
   )
-
-panel_d <- ggplot(
-  sigma_summary,
-  aes(estimate, method, color = method)
-) +
-  geom_pointrange(aes(xmin = q025, xmax = q975), size = 0.35, linewidth = 0.5) +
-  scale_color_manual(values = method_colors, name = "Method", drop = FALSE) +
-  labs(
-    title = "(D) Residual log-survival SD",
-    x = "Posterior mean (95% CrI)",
-    y = NULL
-  ) +
-  paper_theme() +
-  theme(legend.position = "none")
-
-fig4 <- (panel_a | panel_b) /
-  (panel_c | panel_d) +
-  plot_layout(guides = "collect") &
-  theme(legend.position = "bottom")
-
-save_pdf(fig4, "Main_Fig4_TCGA_Application.pdf", 13, 9.5)
 
 write.csv(
   bind_rows(
@@ -789,16 +652,10 @@ write.csv(
         n_events = NA_integer_
       )
   ),
-  file.path(export_dir, "FigureData_Main_Fig4_TCGA_Application.csv"),
+  file.path(export_dir, "FigureData_Article_Fig3_TCGA.csv"),
   row.names = FALSE,
   na = ""
 )
-invisible(file.copy(
-  file.path(export_dir, "FigureData_Main_Fig4_TCGA_Application.csv"),
-  file.path(article_export_dir, "FigureData_Main_Fig4_TCGA_Application.csv"),
-  overwrite = TRUE
-))
-
 cat("\n=== TCGA PanCancer Atlas application ===\n")
 cat(
   "Patients:",
@@ -814,7 +671,7 @@ cat("\nRuntime (seconds):\n")
 print(runtime, row.names = FALSE)
 cat("\nPosterior summaries (theta, per method and basket):\n")
 print(
-  posterior %>%
+  posterior_summary %>%
     filter(parameter == "theta") %>%
     select(method, basket, estimate, q025, q975, rhat, bulk_ess) %>%
     as.data.frame(),

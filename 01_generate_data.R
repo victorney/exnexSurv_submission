@@ -1,4 +1,11 @@
-# Simulation study: data generation
+# Simulation study: data generation.
+#
+# Generates the deterministic trial datasets for every scenario in
+# scenario_specs and writes data/sim_<scenario>_rep<nnn>.rds. Existing files are
+# skipped, so the script resumes where it stopped.
+#
+# Usage: SIM_SCENARIOS=mixed SIM_N_REPS=500 Rscript 01_generate_data.R
+# (on Windows PowerShell, set the two variables with $env: first).
 
 dir.create("data", showWarnings = FALSE, recursive = TRUE)
 
@@ -128,6 +135,15 @@ generate_basket_data <- function(
     mu_true <- 1.5
     tau_true <- 0.08
     theta_true <- rnorm(K, mean = mu_true, sd = tau_true)
+  } else if (scenario == "mixed_divlarge") {
+    # Mixed-efficacy effects with the three discordant baskets placed among the
+    # largest arms, so that discordance is no longer confounded with basket
+    # size. The random-number draws are identical to those of "mixed", which
+    # lets the two scenarios be paired replicate by replicate.
+    mu_true <- 1.5
+    tau_true <- 0.15
+    theta_true[1:3] <- c(-0.4, -0.6, -0.5)
+    theta_true[4:9] <- rnorm(6L, mean = mu_true, sd = tau_true)
   } else if (
     scenario %in%
       c(
@@ -146,10 +162,6 @@ generate_basket_data <- function(
     mu_true <- 0.5
     tau_true <- 1.0
     theta_true <- seq(-1.2, 1.8, length.out = K)
-  } else if (scenario == "global_null") {
-    mu_true <- -0.2
-    tau_true <- 0.08
-    theta_true <- rnorm(K, mean = mu_true, sd = tau_true)
   } else {
     stop("Unknown scenario: ", scenario)
   }
@@ -436,19 +448,19 @@ scenario_specs <- c(
   homogeneous = 2000L,
   mixed = 2000L,
   heterogeneous = 2000L,
-  global_null = 2000L,
   weibull_misspec = 1000L,
   hetvar_misspec = 1000L,
   t_misspec = 1000L,
   infcens_misspec = 1000L,
-  tcga_calib = 1000L
+  tcga_calib = 1000L,
+  # Divergent-position robustness check (see 08_divergent_position.R); fitted
+  # with the 'mixed' replicate seeds so the two scenarios can be paired.
+  mixed_divlarge = 240L
 )
 
-# Public key for the extreme-value (max-Gumbel) misspecification scenario. The
-# archive, data filenames, and seed policy retain the original key
-# weibull_misspec; all public-facing labels use the corrected distributional
-# name "Gumbel (extreme-value) misspecification".
-gumbel_misspec <- "weibull_misspec"
+# The extreme-value (max-Gumbel) misspecification scenario keeps the historical
+# key weibull_misspec in data filenames and seeds; all public-facing labels use
+# the corrected distributional name "Gumbel (extreme-value) misspecification".
 
 scenarios <- names(scenario_specs)
 n_reps_override <- Sys.getenv("SIM_N_REPS")
@@ -466,15 +478,35 @@ if (scenario_override != "") {
   scenarios <- unique(requested_scenarios)
 }
 
+# Seed indices are pinned to their historical values so that removing the
+# global-null design from the archive does not change any other scenario's
+# random-number stream. mixed_divlarge reuses the 'mixed' index by design, so
+# the two scenarios share their stream replicate by replicate.
+seed_index_map <- c(
+  homogeneous = 1L,
+  mixed = 2L,
+  heterogeneous = 3L,
+  # global_null = 4L,
+  weibull_misspec = 5L,
+  hetvar_misspec = 6L,
+  t_misspec = 7L,
+  infcens_misspec = 8L,
+  tcga_calib = 9L
+)
+
 for (scenario in scenarios) {
-  scenario_index <- match(scenario, names(scenario_specs))
   n_reps <- if (n_reps_override != "") {
     as.integer(n_reps_override)
   } else {
     unname(scenario_specs[[scenario]])
   }
   for (replicate in seq_len(n_reps)) {
-    replicate_seed <- base_seed + scenario_index * 10000L + replicate
+    seed_index <- if (scenario == "mixed_divlarge") {
+      seed_index_map[["mixed"]]
+    } else {
+      seed_index_map[[scenario]]
+    }
+    replicate_seed <- base_seed + seed_index * 10000L + replicate
     output_file <- sprintf(
       "data/sim_%s_rep%03d.rds",
       scenario,

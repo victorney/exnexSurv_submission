@@ -1,6 +1,4 @@
 "scenario","scenario_label","method","method_id","n_trials","median_ess_normalized_seconds","p25_ess_normalized_seconds","p75_ess_normalized_seconds"
-"global_null","Global null","Stan EXNEX (NUTS)","stan_exnex",1947,1.26530560716956,1.13756508360387,1.40792283792064
-"global_null","Global null","exnexSurv (Gibbs DA)","gibbs_exnex",1947,0.135338018345153,0.108236781290727,0.172660605589974
 "heterogeneous","Complete heterogeneity","Stan EXNEX (NUTS)","stan_exnex",1653,1.26828535751664,1.12696921657746,1.44508716108276
 "heterogeneous","Complete heterogeneity","exnexSurv (Gibbs DA)","gibbs_exnex",1653,0.189856893814055,0.14574487144129,0.257551837752191
 "hetvar_misspec","Heteroskedastic variances","Stan EXNEX (NUTS)","stan_exnex",992,1.04300047490789,0.943047438999462,1.18005881703336
@@ -17,3 +15,5 @@
 "tcga_calib","TCGA-calibrated","exnexSurv (Gibbs DA)","gibbs_exnex",70,2.15118392746649,1.86608933049259,2.50590453267618
 "weibull_misspec","Gumbel (extreme-value) misspecification","Stan EXNEX (NUTS)","stan_exnex",995,1.00944654266619,0.911980766054244,1.12350733080461
 "weibull_misspec","Gumbel (extreme-value) misspecification","exnexSurv (Gibbs DA)","gibbs_exnex",995,0.0821537525274627,0.0644804640890947,0.105089369211952
+"tcga_application","TCGA application","exnexSurv (Gibbs DA)","gibbs_exnex",1,3.23485586377628,3.23485586377628,3.23485586377628
+"tcga_application","TCGA application","Stan EXNEX (NUTS)","stan_exnex",1,2.95061484130445,2.95061484130445,2.95061484130445

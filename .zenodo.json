@@ -1,0 +1,39 @@
+{
+  "title": "Reproducibility archive for Data-Augmented Gibbs Sampling for EXNEX Log-Normal Survival Models in Basket Trials with Right-Censored Endpoints",
+  "description": "Analysis scripts, fixed inputs, archived fit summaries, evidence exports, and figures for the article on exnexSurv, a data-augmented Gibbs sampler for EXNEX log-normal survival models in basket trials with right-censored endpoints. Funding: CAPES, Finance Code 001.",
+  "upload_type": "software",
+  "language": "eng",
+  "license": "MIT",
+  "version": "1.0.0",
+  "creators": [
+    {
+      "name": "Ney, Victor Hugo Soares",
+      "orcid": "0009-0002-8299-9884"
+    },
+    {
+      "name": "Fossaluza, Victor",
+      "orcid": "0000-0002-9328-0210"
+    }
+  ],
+  "keywords": [
+    "basket trials",
+    "EXNEX",
+    "survival analysis",
+    "Bayesian inference",
+    "data augmentation",
+    "Gibbs sampler",
+    "reproducibility"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "10.32614/CRAN.package.exnexSurv",
+      "relation": "is related to",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "https://github.com/victorney/exnexSurv_submission",
+      "relation": "is identical to",
+      "scheme": "url"
+    }
+  ]
+}

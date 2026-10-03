@@ -1,0 +1,5 @@
+"scenario","population","method","n_trials","n_qualified","qualified_pct"
+"tcga_calib","all_replicates","gibbs_exnex",1000,758,75.8
+"tcga_calib","stan_subset","gibbs_exnex",100,71,71
+"tcga_calib","stan_subset","stan_exnex",100,99,99
+"tcga_calib","stan_subset","jointly_qualified",100,70,70

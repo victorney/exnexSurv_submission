@@ -1,5 +1,4 @@
 "scenario","scenario_label","level","n","both","gibbs_only","stan_only","neither","both_pct","gibbs_only_pct","stan_only_pct","neither_pct"
-"global_null","Global null","basket",18000,17814,132,9,45,98.9666666666667,0.733333333333333,0.05,0.25
 "heterogeneous","Complete heterogeneity","basket",18000,16985,646,172,197,94.3611111111111,3.58888888888889,0.955555555555556,1.09444444444444
 "hetvar_misspec","Heteroskedastic variances","basket",9000,8972,21,2,5,99.6888888888889,0.233333333333333,0.0222222222222222,0.0555555555555556
 "homogeneous","Homogeneous","basket",18000,17748,187,11,54,98.6,1.03888888888889,0.0611111111111111,0.3
@@ -8,7 +7,6 @@
 "t_misspec","Student-t errors","basket",8982,8966,12,0,4,99.8218659541305,0.133600534402138,0,0.0445335114673792
 "tcga_calib","TCGA-calibrated","basket",891,858,0,33,0,96.2962962962963,0,3.7037037037037,0
 "weibull_misspec","Gumbel (extreme-value) misspecification","basket",9000,8982,13,1,4,99.8,0.144444444444444,0.0111111111111111,0.0444444444444444
-"global_null","Global null","trial",2000,1947,0,6,47,97.35,0,0.3,2.35
 "heterogeneous","Complete heterogeneity","trial",2000,1653,6,136,205,82.65,0.3,6.8,10.25
 "hetvar_misspec","Heteroskedastic variances","trial",1000,992,1,2,5,99.2,0.1,0.2,0.5
 "homogeneous","Homogeneous","trial",2000,1933,2,10,55,96.65,0.1,0.5,2.75

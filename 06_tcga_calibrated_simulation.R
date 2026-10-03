@@ -156,12 +156,21 @@ for (r in seq_len(n_reps)) {
         iter = n_iter,
         warmup = n_warmup,
         chains = n_chains,
-        parallel_chains = n_chains,
+        # exnexSurv 1.3.x takes the number of chains to run concurrently;
+        # version 1.4.0 replaced that with a logical flag.
+        parallel_chains = if (utils::packageVersion("exnexSurv") >= "1.4.0") {
+          TRUE
+        } else {
+          n_chains
+        },
         seed = fit_seed_base + r * 10L + 1L
       )
       t_exnex_val <- proc.time()[[3L]] - t_start
     },
-    error = function(e) fit_exnex <- NULL
+    error = function(e) {
+      warning("exnexSurv failed for replicate ", r, ": ", conditionMessage(e))
+      NULL
+    }
   )
 
   df_obs <- df[df$event == 1, ]
@@ -198,7 +207,15 @@ for (r in seq_len(n_reps)) {
         )
         t_stan_exnex_val <- proc.time()[[3L]] - t_start
       },
-      error = function(e) fit_stan_exnex <- NULL
+      error = function(e) {
+        warning(
+          "Stan EXNEX failed for replicate ",
+          r,
+          ": ",
+          conditionMessage(e)
+        )
+        NULL
+      }
     )
   }
 
@@ -221,7 +238,15 @@ for (r in seq_len(n_reps)) {
         )
         t_stan_pooled_val <- proc.time()[[3L]] - t_start
       },
-      error = function(e) fit_stan_pooled <- NULL
+      error = function(e) {
+        warning(
+          "Stan complete pooling failed for replicate ",
+          r,
+          ": ",
+          conditionMessage(e)
+        )
+        NULL
+      }
     )
   }
 
@@ -244,7 +269,15 @@ for (r in seq_len(n_reps)) {
         )
         t_stan_unp_val <- proc.time()[[3L]] - t_start
       },
-      error = function(e) fit_stan_unpooled <- NULL
+      error = function(e) {
+        warning(
+          "Stan no pooling failed for replicate ",
+          r,
+          ": ",
+          conditionMessage(e)
+        )
+        NULL
+      }
     )
   }
 

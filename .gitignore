@@ -3,5 +3,8 @@
 .RData
 .Ruserdata
 
-# Full simulation inputs are generated on demand and are not part of the DOI snapshot.
+# Full simulation inputs are generated on demand and are not archived here.
 data/sim_*.rds
+# Derived on demand from the raw TCGA files and from the archived checkpoints.
+data/tcga/tcga_clinical.rds
+fitted_models/scenarios/results_prior_sensitivity_*.rds

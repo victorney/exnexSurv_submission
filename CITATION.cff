@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use this archive, please cite it as below."
+type: software
+title: "Reproducibility archive for Data-Augmented Gibbs Sampling for EXNEX Log-Normal Survival Models in Basket Trials with Right-Censored Endpoints"
+abstract: "Analysis scripts, fixed inputs, archived fit summaries, evidence exports, and figures for the article on exnexSurv, a data-augmented Gibbs sampler for EXNEX log-normal survival models in basket trials with right-censored endpoints. Funding: CAPES, Finance Code 001."
+authors:
+  - family-names: "Ney"
+    given-names: "Victor Hugo Soares"
+    orcid: "https://orcid.org/0009-0002-8299-9884"
+  - family-names: "Fossaluza"
+    given-names: "Victor"
+    orcid: "https://orcid.org/0000-0002-9328-0210"
+version: "1.0.0"
+date-released: "2026-10-03"
+license: MIT
+repository-code: "https://github.com/victorney/exnexSurv_submission"
+url: "https://github.com/victorney/exnexSurv_submission"
+keywords:
+  - basket trials
+  - EXNEX
+  - survival analysis
+  - Bayesian inference
+  - data augmentation
+  - Gibbs sampler
+  - reproducibility

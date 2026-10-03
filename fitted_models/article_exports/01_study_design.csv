@@ -1,5 +1,4 @@
 "scenario","scenario_label","scenario_definition","n_trials","n_baskets","total_patients_per_trial","target_censoring","mean_observed_censoring","sd_observed_censoring","mean_patients_per_trial","mean_events_per_trial"
-"global_null","Global null","Nine baskets generated around a common null effect with low between-basket heterogeneity.",2000,9,135,0.3,0.30797037037037,0.045208159262087,135,93.424
 "heterogeneous","Complete heterogeneity","Nine fixed basket effects spanning a broad heterogeneous range.",2000,9,135,0.3,0.264233333333333,0.0466610390280955,135,99.3285
 "hetvar_misspec","Heteroskedastic variances","Mixed-efficacy effects with basket-specific residual variances.",1000,9,135,0.3,0.318674074074074,0.0443916188987119,135,91.979
 "homogeneous","Homogeneous","Nine baskets generated around a common positive mean with low between-basket heterogeneity.",2000,9,135,0.3,0.307825925925926,0.0438236323141038,135,93.4435

@@ -1,0 +1,5 @@
+scenario,method_id,n_trials,qualified_pct,scenario_label,method
+mixed,gibbs_exnex,240,99.58333333333333,Mixed Efficacy,exnexSurv (Gibbs DA)
+mixed,stan_exnex,240,99.58333333333333,Mixed Efficacy,Stan EXNEX (NUTS)
+mixed_divlarge,gibbs_exnex,240,92.08333333333333,Divergent-position,exnexSurv (Gibbs DA)
+mixed_divlarge,stan_exnex,240,94.58333333333333,Divergent-position,Stan EXNEX (NUTS)

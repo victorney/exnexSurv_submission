@@ -1,5 +1,13 @@
-# Simulation study: fit all models for one scenario (made to run via Rscript).
-# Install exnexSurv before running this script.
+# Simulation study: fit all models for one scenario.
+#
+# Usage: Rscript 02_fit_scenario.R <scenario>
+# Fits exnexSurv and the three Stan comparators for every replicate, writes
+# fitted_models/scenarios/results_scenario_<scenario>[_shard<k>].rds, and
+# resumes from that file if it exists.
+#
+# Sharding: FIT_REP_FROM, FIT_REP_TO and FIT_SHARD split the replicate range
+# across processes, for example
+#   FIT_REP_FROM=1 FIT_REP_TO=120 FIT_SHARD=1 Rscript 02_fit_scenario.R mixed_divlarge
 
 suppressPackageStartupMessages({
   library(survival)
@@ -18,11 +26,11 @@ scenarios <- c(
   "homogeneous",
   "mixed",
   "heterogeneous",
-  "global_null",
   "weibull_misspec",
   "hetvar_misspec",
   "t_misspec",
-  "infcens_misspec"
+  "infcens_misspec",
+  "mixed_divlarge"
 )
 
 if (length(args) != 1L || !args[[1L]] %in% scenarios) {
@@ -34,17 +42,30 @@ if (length(args) != 1L || !args[[1L]] %in% scenarios) {
 }
 
 scen <- args[[1L]]
-scenario_index <- match(scen, scenarios)
+# Seed indices are pinned to their historical values so that removing the
+# global-null design from the archive does not change any other scenario's fit
+# seeds. mixed_divlarge is paired with 'mixed' replicate by replicate.
+seed_index_map <- c(
+  homogeneous = 1L,
+  mixed = 2L,
+  heterogeneous = 3L,
+  weibull_misspec = 5L,
+  hetvar_misspec = 6L,
+  t_misspec = 7L,
+  infcens_misspec = 8L,
+  mixed_divlarge = 2L
+)
+seed_index <- seed_index_map[[scen]]
 
 scenario_n_reps <- c(
   homogeneous = 2000L,
   mixed = 2000L,
   heterogeneous = 2000L,
-  global_null = 2000L,
   weibull_misspec = 1000L,
   hetvar_misspec = 1000L,
   t_misspec = 1000L,
-  infcens_misspec = 1000L
+  infcens_misspec = 1000L,
+  mixed_divlarge = 240L
 )
 
 n_reps_override <- Sys.getenv("FIT_N_REPS")
@@ -58,7 +79,7 @@ n_reps <- if (n_reps_override != "") {
 n_iter <- 2000
 n_warmup <- 1000
 n_chains <- 4
-fit_seed_base <- 1000000L + scenario_index * 10000L
+fit_seed_base <- 1000000L + seed_index * 10000L
 
 options(mc.cores = 4)
 
@@ -144,12 +165,19 @@ extract_exnex_summary <- function(fit, K_rep, n_chains, n_post_per_chain) {
   res_df
 }
 
-# Resume from an existing scenario checkpoint.
-scen_file <- sprintf("fitted_models/scenarios/results_scenario_%s.rds", scen)
+# Resume from an existing scenario checkpoint. A scenario can be split across
+# parallel processes with FIT_REP_FROM, FIT_REP_TO and FIT_SHARD.
+rep_from <- as.integer(Sys.getenv("FIT_REP_FROM", "1"))
+rep_to <- as.integer(Sys.getenv("FIT_REP_TO", as.character(n_reps)))
+shard_tag <- Sys.getenv("FIT_SHARD", "")
+scen_file <- sprintf(
+  "fitted_models/scenarios/results_scenario_%s%s.rds",
+  scen,
+  if (nzchar(shard_tag)) paste0("_shard", shard_tag) else ""
+)
 
 if (file.exists(scen_file)) {
-  scen_results_df <- readRDS(scen_file) %>%
-    select(-any_of(c("grupo", "exnex_pexch")))
+  scen_results_df <- readRDS(scen_file)
 
   scen_results_df$target_cens <- 0.30
 
@@ -167,7 +195,7 @@ if (file.exists(scen_file)) {
   completed_reps <- c()
 }
 
-for (r in seq_len(n_reps)) {
+for (r in seq(rep_from, rep_to)) {
   if (r %in% completed_reps) {
     next
   }
@@ -207,7 +235,13 @@ for (r in seq_len(n_reps)) {
         iter = n_iter,
         warmup = n_warmup,
         chains = n_chains,
-        parallel_chains = n_chains,
+        # exnexSurv 1.3.x takes the number of chains to run concurrently;
+        # version 1.4.0 replaced that with a logical flag.
+        parallel_chains = if (utils::packageVersion("exnexSurv") >= "1.4.0") {
+          TRUE
+        } else {
+          n_chains
+        },
         seed = rep_seed + 1L
       )
       t_exnex_val <- proc.time()[[3L]] - t_start
@@ -354,7 +388,7 @@ for (r in seq_len(n_reps)) {
 
   scen_results[[as.character(r)]] <- res_iter
 
-  if (length(scen_results) %% 25 == 0 || r == n_reps) {
+  if (length(scen_results) %% 25 == 0 || r == rep_to) {
     checkpoint <- do.call(rbind, scen_results)
     saveRDS(checkpoint, scen_file)
     rm(sim, df, fit_exnex, fit_stan_exnex, fit_stan_pooled, fit_stan_unpooled)

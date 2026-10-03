@@ -16,7 +16,7 @@ dir.create(figure_dir, showWarnings = FALSE, recursive = TRUE)
 required_files <- c(
   file.path(export_dir, "07_mixed_cohort_operating_characteristics.csv"),
   file.path(export_dir, "04_runtime_trial_level.csv"),
-  file.path(tcga_dir, "FigureData_Main_Fig4_TCGA_Application.csv")
+  file.path(tcga_dir, "FigureData_Article_Fig3_TCGA.csv")
 )
 missing_files <- required_files[!file.exists(required_files)]
 if (length(missing_files) > 0L) {
@@ -37,7 +37,7 @@ runtime_trial <- read_export(file.path(
 ))
 fig_data <- read_export(file.path(
   tcga_dir,
-  "FigureData_Main_Fig4_TCGA_Application.csv"
+  "FigureData_Article_Fig3_TCGA.csv"
 ))
 
 method_levels <- c(
@@ -53,7 +53,6 @@ method_colors <- c(
   "exnexSurv (Gibbs DA)" = "#0072B2"
 )
 scenario_levels <- c(
-  "Global null",
   "Homogeneous",
   "Mixed efficacy",
   "Complete heterogeneity"
@@ -165,7 +164,7 @@ comparison_methods <- c("exnexSurv (Gibbs DA)", "Stan EXNEX (NUTS)")
 comparison_runtime <- runtime_trial %>%
   filter(
     method %in% comparison_methods,
-    scenario %in% c("homogeneous", "mixed", "heterogeneous", "global_null")
+    scenario %in% c("homogeneous", "mixed", "heterogeneous")
   ) %>%
   mutate(
     method = factor(method, levels = comparison_methods),
@@ -206,7 +205,11 @@ p3_ess <- ggplot(
   scale_y_log10() +
   scale_fill_manual(values = method_colors, name = "Method", drop = FALSE) +
   scale_x_discrete(labels = wrap_labels) +
-  labs(title = "(B) Bulk ESS per second", x = NULL, y = "ESS/sec (log scale)") +
+  labs(
+    title = "(B) Effective sample size per second",
+    x = NULL,
+    y = "ESS/sec (log scale)"
+  ) +
   paper_theme() +
   theme(axis.text.x = element_text(angle = 0, hjust = 0.5))
 
@@ -299,7 +302,7 @@ panel_a <- ggplot() +
   ) +
   labs(
     title = "(A) Basket-specific log-survival intercepts",
-    subtitle = "Grey band: Complete-pooling estimate (95% CrI)",
+    subtitle = "Gray band: Complete-pooling estimate (95% CrI)",
     x = NULL,
     y = "Posterior mean (95% CrI)"
   ) +

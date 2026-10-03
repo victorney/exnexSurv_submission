@@ -1,5 +1,10 @@
-# Reproduce the aggregate simulation results reported in the article.
-# This script reads archived fit summaries; it does not refit any model.
+# Derive the article evidence exports from the archived fit summaries.
+#
+# Reads fitted_models/scenarios/results_scenario_*.rds and the TCGA application
+# summaries, and writes the compact CSVs in fitted_models/article_exports. It
+# does not fit any model.
+#
+# Usage: Rscript 03_analyze_article.R
 
 suppressPackageStartupMessages({
   library(dplyr)
@@ -15,12 +20,15 @@ scenario_files <- list.files(
   pattern = "^results_scenario_.*\\.rds$",
   full.names = TRUE
 )
+# The divergent-position checkpoints are analyzed by 08_divergent_position.R.
+scenario_files <- scenario_files[
+  !grepl("mixed_divlarge", basename(scenario_files))
+]
 if (length(scenario_files) == 0L) {
   stop("No archived scenario results found in ", result_dir, ".")
 }
 
-df_raw <- bind_rows(lapply(scenario_files, readRDS)) %>%
-  select(-any_of(c("grupo", "exnex_pexch")))
+df_raw <- bind_rows(lapply(scenario_files, readRDS))
 if (!"target_cens" %in% names(df_raw)) {
   df_raw$target_cens <- NA_real_
 }
@@ -85,7 +93,6 @@ scenario_order <- c(
   "homogeneous",
   "mixed",
   "heterogeneous",
-  "global_null",
   "weibull_misspec",
   "hetvar_misspec",
   "t_misspec",
@@ -96,7 +103,6 @@ scenario_labels <- c(
   homogeneous = "Homogeneous",
   mixed = "Mixed efficacy",
   heterogeneous = "Complete heterogeneity",
-  global_null = "Global null",
   weibull_misspec = "Gumbel (extreme-value) misspecification",
   hetvar_misspec = "Heteroskedastic variances",
   t_misspec = "Student-t errors",
@@ -107,7 +113,6 @@ scenario_definitions <- c(
   homogeneous = "Nine baskets generated around a common positive mean with low between-basket heterogeneity.",
   mixed = "Six responsive baskets around a positive mean and three resistant outlier baskets.",
   heterogeneous = "Nine fixed basket effects spanning a broad heterogeneous range.",
-  global_null = "Nine baskets generated around a common null effect with low between-basket heterogeneity.",
   weibull_misspec = "Mixed-efficacy effects with Gumbel (extreme-value) errors on the log-time scale.",
   hetvar_misspec = "Mixed-efficacy effects with basket-specific residual variances.",
   t_misspec = "Mixed-efficacy effects with scaled Student-t errors (5 degrees of freedom).",
@@ -767,6 +772,96 @@ ess_index_summary <- ess_index %>%
     .groups = "drop"
   )
 
+# Accuracy-matched index for the TCGA application itself (Table 3). The two
+# CSVs are written by 05_tcga_application.R.
+app_runtime <- read.csv("fitted_models/tcga_application/04_runtime.csv")
+app_diagnostics <- read.csv(
+  "fitted_models/tcga_application/03_mcmc_diagnostics.csv"
+)
+app_index <- app_diagnostics %>%
+  filter(
+    parameter == "theta",
+    method_id %in% c("gibbs_exnex", "stan_exnex")
+  ) %>%
+  group_by(method_id, method) %>%
+  summarise(min_basket_ess = min(bulk_ess), .groups = "drop") %>%
+  left_join(
+    app_runtime %>% select(method_id, runtime_seconds = seconds),
+    by = "method_id"
+  ) %>%
+  mutate(
+    scenario = "tcga_application",
+    scenario_label = "TCGA application",
+    n_trials = 1L,
+    ess_normalized_seconds = runtime_seconds * 400 / min_basket_ess
+  ) %>%
+  transmute(
+    scenario,
+    scenario_label,
+    method,
+    method_id,
+    n_trials,
+    median_ess_normalized_seconds = ess_normalized_seconds,
+    p25_ess_normalized_seconds = ess_normalized_seconds,
+    p75_ess_normalized_seconds = ess_normalized_seconds
+  )
+ess_index_summary <- bind_rows(ess_index_summary, app_index)
+
+# TCGA-calibrated qualification: the Gibbs sampler qualifies on 758 of the
+# 1,000 fitted replicates; on the 100 trials where the Stan comparator was
+# run, Gibbs qualifies on 71, Stan on 99, and both on 70.
+calib <- readRDS("fitted_models/scenarios/results_scenario_tcga_calib.rds")
+calib_trials <- calib %>%
+  mutate(
+    gibbs_basket = is.finite(exnex_mean) &
+      is.finite(exnex_q025) &
+      is.finite(exnex_q975) &
+      exnex_q025 <= exnex_q975 &
+      is.finite(exnex_rhat) &
+      exnex_rhat < 1.01 &
+      is.finite(exnex_ess) &
+      exnex_ess >= 400,
+    stan_basket = is.finite(stan_exnex.mean) &
+      is.finite(stan_exnex.q025) &
+      is.finite(stan_exnex.q975) &
+      stan_exnex.q025 <= stan_exnex.q975 &
+      is.finite(stan_exnex.rhat) &
+      stan_exnex.rhat < 1.01 &
+      is.finite(stan_exnex.ess) &
+      stan_exnex.ess >= 400
+  ) %>%
+  group_by(rep_id) %>%
+  summarise(
+    has_stan = any(is.finite(stan_exnex.mean)),
+    gibbs_qualified = sum(gibbs_basket) == n(),
+    stan_qualified = any(is.finite(stan_exnex.mean)) & sum(stan_basket) == n(),
+    .groups = "drop"
+  )
+calib_qualification <- bind_rows(
+  data.frame(
+    scenario = "tcga_calib",
+    population = "all_replicates",
+    method = "gibbs_exnex",
+    n_trials = nrow(calib_trials),
+    n_qualified = sum(calib_trials$gibbs_qualified)
+  ),
+  data.frame(
+    scenario = "tcga_calib",
+    population = "stan_subset",
+    method = c("gibbs_exnex", "stan_exnex", "jointly_qualified"),
+    n_trials = 100L,
+    n_qualified = c(
+      sum(calib_trials$gibbs_qualified[calib_trials$rep_id <= 100]),
+      sum(calib_trials$stan_qualified[calib_trials$rep_id <= 100]),
+      sum(
+        calib_trials$gibbs_qualified[calib_trials$rep_id <= 100] &
+          calib_trials$stan_qualified[calib_trials$rep_id <= 100]
+      )
+    )
+  )
+) %>%
+  mutate(qualified_pct = 100 * n_qualified / n_trials)
+
 write_export <- function(x, filename) {
   write.csv(x, file.path(export_dir, filename), row.names = FALSE, na = "")
 }
@@ -782,5 +877,6 @@ write_export(hetvar_groups, "14_hetvar_variance_groups.csv")
 write_export(extreme_discrepancies, "15_extreme_discrepancies.csv")
 write_export(paired, "20_paired_qualification.csv")
 write_export(ess_index_summary, "25_ess_normalized_index.csv")
+write_export(calib_qualification, "31_tcga_calibrated_qualification.csv")
 
 cat("Wrote article evidence exports to ", export_dir, ".\n", sep = "")
